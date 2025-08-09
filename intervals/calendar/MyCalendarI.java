@@ -18,6 +18,7 @@ class MyCalendar {
         int e = Math.min(e1,e2);
 
         ArrayList<Integer> ans = new ArrayList<>();
+        
         ans.add(s);
         ans.add(e);
 
