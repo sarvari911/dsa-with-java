@@ -1,0 +1,18 @@
+class Solution {
+    private int csB(int n){
+        int ans = 0;
+        while(n>0){
+            ans +=1;
+            n = (n &(n-1));
+        }
+        return ans;
+    }
+    public int minOperations(int[] nums, int k) {
+        int arrXor = 0;
+        for(int element : nums){
+            arrXor^=element;
+        }
+        int xor = arrXor^k;
+        return csB(xor);
+    }
+}
