@@ -1,0 +1,17 @@
+class Solution {
+    public int climbStairs(int n) {
+        // think of it like a fibonacci series
+        if(n < 0){
+            return 0;
+        }
+
+        if(n == 0){
+            return 1;
+        }
+
+        int oneStep = climbStairs(n-1);
+        int twoStep = climbStairs(n-2);
+
+        return oneStep + twoStep;
+    }
+}
