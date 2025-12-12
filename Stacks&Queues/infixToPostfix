@@ -1,0 +1,70 @@
+import java.util.*;
+
+public class InfixToPostfix {
+
+    private static int precedence(char ch) {
+        switch (ch) {
+            case '+':
+            case '-': return 1;
+            case '*':
+            case '/': return 2;
+            case '^': return 3;  // right-associative
+        }
+        return -1;
+    }
+
+    private static boolean isLeftAssociative(char ch) {
+        return ch != '^';  // only ^ is right associative
+    }
+
+    public static String toPostfix(String exp) {
+        Stack<Character> st = new Stack<>();
+        StringBuilder out = new StringBuilder();
+
+        for (char ch : exp.toCharArray()) {
+
+            // 1. Operand → direct output
+            if (Character.isLetterOrDigit(ch)) {
+                out.append(ch);
+            }
+
+            // 2. Opening bracket
+            else if (ch == '(') {
+                st.push(ch);
+            }
+
+            // 3. Closing bracket
+            else if (ch == ')') {
+                while (!st.isEmpty() && st.peek() != '(') {
+                    out.append(st.pop());
+                }
+                st.pop(); // remove '('
+            }
+
+            // 4. Operator
+            else {
+                while (!st.isEmpty() && st.peek() != '(') {
+
+                    char top = st.peek();
+
+                    // Check precedence and associativity
+                    if ((isLeftAssociative(ch) && precedence(top) >= precedence(ch))
+                     || (!isLeftAssociative(ch) && precedence(top) > precedence(ch))) {
+                        out.append(st.pop());
+                    } else break;
+                }
+
+                st.push(ch);
+            }
+        }
+
+        // 5. Pop remaining operators
+        while (!st.isEmpty()) out.append(st.pop());
+
+        return out.toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(toPostfix("A+B*(C^D-E)"));  // ABCD^E-*+
+    }
+}
