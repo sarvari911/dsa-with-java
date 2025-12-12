@@ -1,0 +1,83 @@
+import java.util.*;
+
+public class InfixToPrefix {
+
+    private static int precedence(char ch) {
+        switch (ch) {
+            case '+':
+            case '-': return 1;
+            case '*':
+            case '/': return 2;
+            case '^': return 3;
+        }
+        return -1;
+    }
+
+    private static boolean isLeftAssociative(char ch) {
+        return ch != '^';  
+    }
+
+    private static String reverseAndSwap(String exp) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = exp.length() - 1; i >= 0; i--) {
+            char ch = exp.charAt(i);
+
+            if (ch == '(') sb.append(')');
+            else if (ch == ')') sb.append('(');
+            else sb.append(ch);
+        }
+        return sb.toString();
+    }
+
+    private static String toPostfix(String exp) {
+
+        Stack<Character> st = new Stack<>();
+        StringBuilder out = new StringBuilder();
+
+        for (char ch : exp.toCharArray()) {
+
+            if (Character.isLetterOrDigit(ch)) {
+                out.append(ch);
+            }
+
+            else if (ch == '(') {
+                st.push(ch);
+            }
+
+            else if (ch == ')') {
+                while (!st.isEmpty() && st.peek() != '(') {
+                    out.append(st.pop());
+                }
+                st.pop();
+            }
+
+            else {
+                while (!st.isEmpty() && st.peek() != '(') {
+                    char top = st.peek();
+
+                    if ((isLeftAssociative(ch) && precedence(top) >= precedence(ch))
+                     || (!isLeftAssociative(ch) && precedence(top) > precedence(ch))) 
+                    {
+                        out.append(st.pop());
+                    } else break;
+                }
+                st.push(ch);
+            }
+        }
+
+        while (!st.isEmpty()) out.append(st.pop());
+
+        return out.toString();
+    }
+
+    public static String toPrefix(String exp) {
+        String rev = reverseAndSwap(exp);
+        String postfix = toPostfix(rev);
+        return new StringBuilder(postfix).reverse().toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(toPrefix("A+B*(C^D-E)")); // +A*B-^CDE
+    }
+}
